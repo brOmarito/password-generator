@@ -12,9 +12,11 @@ var specialChars = "!#@$%&*()-_.+[]{}";
 
 // Write password to the #password input
 function writePassword() {
+  
   continueQuestions = window.confirm("Thanks for using brOmarito's password generator.\n"+
                                       "You will be asked a couple of requirements for your password.\n"+
-                                      "Click 'OK' when you are ready!");
+                                      "Click 'OK' when you are ready!\n"+
+                                      "Press 'Cancel' if you want to exit the questionnaire at any point.");
   var passLength = getLength();
   var useUpperChars = getYesOrNoAnsw("Should the password include Uppercase Letters?");
   var useLowerChars = getYesOrNoAnsw("Should the password include Lowercase Letters?");
@@ -36,7 +38,7 @@ function writePassword() {
 // Generates array based off of what is selected by the user
 function generatePassword(useUpperChars, useLowerChars, useNumeric, useSpecialChars, passLength) {
   var possibleChars = [];
-  var password = "";
+  password = "";
   var upperArray = [];
   var lowerArray = [];
   var numArray = [];
@@ -59,43 +61,38 @@ function generatePassword(useUpperChars, useLowerChars, useNumeric, useSpecialCh
     specialCharArray = specialChars.split("");
     possibleChars = possibleChars.concat(specialCharArray);
   }
-  for (var i = 0; i < passLength; i++) {
-    password += possibleChars[Math.floor(Math.random() * possibleChars.length)];
+
+  while (!verified) {
+    for (var i = 0; i < passLength; i++) {
+      password += possibleChars[Math.floor(Math.random() * possibleChars.length)];
+    }
+    verified = verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialChars, upperArray, lowerArray, numArray, specialCharArray, passLength);
   }
-  verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialChars, password, upperArray, lowerArray, numArray, specialCharArray, passLength);
   return password;
 }
 
 // Verifies that there is at least one instance of each group
 // selected by the user
-function verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialChars, password, upperArray, lowerArray, numArray, specialCharArray, passLength) {
+function verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialChars, upperArray, lowerArray, numArray, specialCharArray, passLength) {
   var clear = true;
   var passwordArray = password.split("");
-  console.log(passwordArray)
 
   if (useUpperChars) {
     clear = compareArrays(passwordArray, upperArray, clear);
-    console.log("Clear result for upper: " + clear);
   }
   if (useLowerChars) {
     clear = compareArrays(passwordArray, lowerArray, clear);
-    console.log("Clear result for lower: " + clear);
   }
   if (useNumeric) {
     clear = compareArrays(passwordArray, numArray, clear);
-    console.log("Clear result for num: " + clear);
   }
   if (useSpecialChars) {
     clear = compareArrays(passwordArray, specialCharArray, clear);
-    console.log("Clear result for special: " + clear);
   }
   if (!clear) {
-    console.log("Password didn't fit all of the requirements: " + password);
-    generatePassword(useUpperChars, useLowerChars, useNumeric, useSpecialChars, passLength);
-  } else {
-    console.log("Password in verify function: " + password);
-    return clear;
+    password = "";
   }
+  return clear;
 }
 
 // Compare two arrays, check if any of the items
@@ -132,15 +129,17 @@ function getLength() {
   if (continueQuestions) {
     var passLength = window.prompt("How long should the password be?\n"+
                                     "(Please enter a number between " + minLength + " and " + maxLength + ")");
-    console.log(parseInt(passLength));
-    if (!passLength) {
-      continueQuestions = false
+    if (passLength === "") {
+      window.alert("Please enter a number");
+      passLength = getLength();
+    } else if (!passLength) {
+      continueQuestions = false;
     } else if (isNaN(parseInt(passLength))) {
       window.alert("Please enter a number");
-      getLength();
+      passLength = getLength();
     } else if (passLength < minLength || passLength > maxLength) {
       window.alert("Please enter a number between " + minLength + " and " + maxLength);
-      getLength();
+      passLength = getLength();
     }
     return passLength
   }
@@ -153,18 +152,20 @@ function getYesOrNoAnsw(message) {
   if (continueQuestions){
     var fullMessage = message + "\nEnter Y for YES and N for NO."
     var userResponse = window.prompt(fullMessage);
-    if (!userResponse) {
+    if (userResponse === "") {
+      window.alert("Please enter either Y or N.");
+      return getYesOrNoAnsw(message);
+    } else if (!userResponse) {
       continueQuestions = false;
-    } else if (!(userResponse.toUpperCase() in answKey)) {
-      window.alert("That answer doesn't make sense. Please try again.");
+      return;
+    } else if (userResponse === "" || !(userResponse.toUpperCase() in answKey)) {
+      window.alert("Please enter either Y or N.");
       return getYesOrNoAnsw(message);
     }
     
     return answKey[userResponse.toUpperCase()];
   }
 }
-
-
 
 // Add event listener to generate button
 generateBtn.addEventListener("click", writePassword);
