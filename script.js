@@ -33,6 +33,7 @@ function writePassword() {
   }
 }
 
+// Generates array based off of what is selected by the user
 function generatePassword(useUpperChars, useLowerChars, useNumeric, useSpecialChars, passLength) {
   var possibleChars = [];
   var password = "";
@@ -65,6 +66,8 @@ function generatePassword(useUpperChars, useLowerChars, useNumeric, useSpecialCh
   return password;
 }
 
+// Verifies that there is at least one instance of each group
+// selected by the user
 function verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialChars, password, upperArray, lowerArray, numArray, specialCharArray, passLength) {
   var clear = true;
   var passwordArray = password.split("");
@@ -95,6 +98,9 @@ function verifyAtLeastOne(useUpperChars, useLowerChars, useNumeric, useSpecialCh
   }
 }
 
+// Compare two arrays, check if any of the items
+// in the second array exist in the first array
+// If any do, return true. If not, return the passed in boolean
 function compareArrays(mainArray, subArray, clear) {
   if (!subArray.some(item => mainArray.includes(item))) {
     return false;
@@ -103,6 +109,10 @@ function compareArrays(mainArray, subArray, clear) {
   }
 }
 
+// Create alphabet array
+// Accepts string to saydetermin casing
+// Not used by user, so not as much errror
+// handling needed
 function createAlphabetArray(casing) {
   var nums = [];
   var alphabet = [];
@@ -116,6 +126,8 @@ function createAlphabetArray(casing) {
   return alphabet;
 }
 
+// Get length and verify the provided
+// user input
 function getLength() {
   if (continueQuestions) {
     var passLength = window.prompt("How long should the password be?\n"+
@@ -134,6 +146,9 @@ function getLength() {
   }
 }
 
+// Return True/False for a Y or N
+// user response and verify the
+// provided response
 function getYesOrNoAnsw(message) {
   if (continueQuestions){
     var fullMessage = message + "\nEnter Y for YES and N for NO."
